@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/Chotiwitorratai/cloudmemo_backend/config"
-	"github.com/Chotiwitorratai/cloudmemo_backend/internal/model"
+	"github.com/Chotiwitorratai/cloudmemo_backend/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -33,8 +33,10 @@ func ConnectDB() {
     fmt.Println("Connection Opened to Database")
 
     // Migrate the database
-    DB.AutoMigrate(&model.Memo{})
-    DB.AutoMigrate(&model.User{})
+    DB.AutoMigrate(
+		&model.User{},
+		&model.Memo{},
+	)
     fmt.Println("Database Migrated")
 
 }

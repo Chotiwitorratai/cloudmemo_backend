@@ -4,6 +4,8 @@ go 1.17
 
 require github.com/gin-gonic/gin v1.7.7
 
+require github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
+
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -12,6 +14,7 @@ require (
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/gofiber/fiber v1.14.6 // indirect
 	github.com/gofiber/fiber/v2 v2.27.0 // indirect
+	github.com/gofiber/jwt/v2 v2.2.7
 	github.com/gofiber/utils v0.0.10 // indirect
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/google/uuid v1.3.0 // indirect
