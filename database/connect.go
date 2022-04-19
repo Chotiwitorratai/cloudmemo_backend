@@ -9,9 +9,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
 var DB *gorm.DB
-
 // ConnectDB connect to db
 func ConnectDB() {
     var err error
@@ -25,7 +23,7 @@ func ConnectDB() {
     // Connection URL to connect to Postgres Database
     dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Config("DB_HOST"), port, config.Config("DB_USER"), config.Config("DB_PASSWORD"), config.Config("DB_NAME"))
 	DB, err = gorm.Open(postgres.Open(dsn))
-
+// DB, err = gorm.Open("sqlite3", "/tmp/gorm.db")
     if err != nil {
         panic(err)
     }
@@ -36,6 +34,8 @@ func ConnectDB() {
     DB.AutoMigrate(
 		&model.User{},
 		&model.Memo{},
+		&model.Comment{},
+		// &model.Tag{},
 	)
     fmt.Println("Database Migrated")
 

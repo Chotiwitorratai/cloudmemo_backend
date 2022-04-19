@@ -7,34 +7,67 @@ import (
 
 type User struct {
 	gorm.Model           // Adds some metadata fields to the table
-	ID         uuid.UUID `gorm:"type:uuid;primaryKey;one2many:user_id"` // Explicitly specify the type to be uuid
+	UserID         uuid.UUID `gorm:"type:uuid"` // Explicitly specify the type to be uuid
 	Username   string `gorm:"uniqueIndex;not nul"`
 	Email      string `gorm:"uniqueIndex;not null"`
 	Password   string `gorm:"not null"`
+	Bio        *string
 	Image      *string
 	Favorites  []Memo `gorm:"many2many:favorites;"`
 
 }
 
+// type Memo struct {
+// 	gorm.Model
+// 	ID	uuid.UUID `gorm:"type:uuid"`
+// 	Slug        string `gorm:"uniqueIndex;not null;"`
+// 	Title       string `gorm:"not null"`
+// 	Description string
+// 	Body        string
+// 	Author      User
+// 	AuthorID    uint
+// 	Weather     string
+// 	MusicUrl    *string
+// 	Comments    []Comment `gorm:"foreignKey:MEMOID"`
+// 	Favorites   []User `gorm:"many2many:favorites;"`
+// }
+
+// type Comment struct {
+// 	gorm.Model
+// 	MEMOID    uint
+// 	Memo      Memo
+// 	UserID    uint
+// 	User      User
+// 	Body      string
+// }
+
 type Memo struct {
 	gorm.Model
-	Slug        string `gorm:"uniqueIndex;not null;primaryKey"`
+	Slug        string `gorm:"uniqueIndex;not null"`
 	Title       string `gorm:"not null"`
 	Description string
 	Body        string
-	Author      User 
-	AuthorID    uint
 	Weather     string
 	MusicUrl    *string
+	Author      User
+	AuthorID    uint
 	Comments    []Comment
 	Favorites   []User `gorm:"many2many:favorites;"`
+	// Tags        []Tag  `gorm:"many2many:article_tags;"`
 }
+
 
 type Comment struct {
 	gorm.Model
 	Memo   Memo
-	ArticleID uint
+	MemoID uint
 	User      User
 	UserID    uint
 	Body      string
 }
+
+// type Tag struct {
+// 	gorm.Model
+// 	Tag      string    `gorm:"uniqueIndex"`
+// 	Articles []Memo `gorm:"many2many:article_tags;"`
+// }
