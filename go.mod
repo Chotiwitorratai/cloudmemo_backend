@@ -1,10 +1,14 @@
 module github.com/Chotiwitorratai/cloudmemo_backend
+
 // +heroku goVersion go1.17
 go 1.17
 
 require github.com/gin-gonic/gin v1.7.7
 
-require github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
+require (
+	github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
+	github.com/lib/pq v1.10.5 // indirect
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
