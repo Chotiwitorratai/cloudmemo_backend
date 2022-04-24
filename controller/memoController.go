@@ -58,7 +58,6 @@ func CreateMemo(c *fiber.Ctx) error {
     memo.AuthorID = claims.UserID
     // memo.IsPublic = false
     memo.Author = *users
-    // Create the Note and return error if encountered
     err = db.Create(&memo).Error
 
     if err != nil {
