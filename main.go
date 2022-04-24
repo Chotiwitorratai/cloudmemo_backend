@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/Chotiwitorratai/cloudmemo_backend/database"
 	router "github.com/Chotiwitorratai/cloudmemo_backend/routes"
@@ -24,5 +25,6 @@ func main() {
 
 	router.SetupRoutes(app)
     log.Fatal(app.Listen(":3000"))
+    log.Fatal(app.Listen(":" + os.Getenv("PORT")))
     // app.Listen(":3000")
 }
