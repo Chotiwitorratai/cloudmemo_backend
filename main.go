@@ -13,8 +13,7 @@ import (
 
 func main() {
     app := fiber.New()
-    d := database.ConnectDB()
-    go database.AutoMigrate(d)
+    database.ConnectDB()
     app.Use(logger.New(logger.Config{
         Format:"[${ip}]:${port} ${status} - ${method} ${path}\n",
     }))
