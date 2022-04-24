@@ -41,7 +41,7 @@ func (us *UserDB) GetByEmail(e string) (*model.User, error) {
 
 func (us *UserDB) GetByUsername(username string) (*model.User, error) {
 	var m model.User
-	if err := us.db.Where(&model.User{Username: username}).Preload("Followers").First(&m).Error; err != nil {
+	if err := us.db.Where(&model.User{Username: username}).First(&m).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}

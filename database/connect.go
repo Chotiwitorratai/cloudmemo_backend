@@ -11,7 +11,7 @@ import (
 )
 var DB *gorm.DB
 // ConnectDB connect to db
-func ConnectDB() {
+func ConnectDB() *gorm.DB{
     var err error
     p := config.Config("DB_PORT")
     port, err := strconv.ParseUint(p, 10, 32)
@@ -30,14 +30,15 @@ func ConnectDB() {
 
     fmt.Println("Connection Opened to Database")
 
-    // Migrate the database
-    DB.AutoMigrate(
+	return DB
+}
+
+func AutoMigrate(db *gorm.DB) {
+	db.AutoMigrate(
 		&model.User{},
 		&model.Memo{},
 		&model.Comment{},
-		// &model.Tag{},
 	)
-    fmt.Println("Database Migrated")
-
+	fmt.Println("Database Migrated")
 }
 

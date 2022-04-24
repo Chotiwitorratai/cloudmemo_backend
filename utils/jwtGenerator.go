@@ -17,7 +17,11 @@ type Tokens struct {
 	Refresh string
 }
 
-func GenerateNewTokens(id string) (*Tokens, error) {
+type SharedToken struct {
+	Token string
+}
+
+func GenerateNewTokens(id uint) (*Tokens, error) {
 	accessToken, err := generateNewAccessToken(id)
 	if err != nil {
 		return nil, err
@@ -33,7 +37,17 @@ func GenerateNewTokens(id string) (*Tokens, error) {
 	}, nil
 }
 
-func generateNewAccessToken(id string) (string, error) {
+func GenerateNewSharedTokens(id string) (*SharedToken, error) {
+	token, err := generateNewSharedToken(id)
+	if err != nil {
+		return nil, err
+	}
+	return &SharedToken{
+		Token:  token,
+	}, nil
+}
+
+func generateNewAccessToken(id uint) (string, error) {
 	secret := os.Getenv("JWT_SECRET_KEY")
 	minutesCount, _ := strconv.Atoi(os.Getenv("JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT"))
 
@@ -66,6 +80,25 @@ func generateNewRefreshToken() (string, error) {
 	expireTime := fmt.Sprint(time.Now().Add(time.Hour * time.Duration(hoursCount)).Unix())
 
 	t := hex.EncodeToString(hash.Sum(nil)) + "." + expireTime
+
+	return t, nil
+}
+
+func generateNewSharedToken(id string) (string, error) {
+	secret := os.Getenv("JWT_SECRET_KEY")
+	minutesCount, _ := strconv.Atoi(os.Getenv("JWT_SECRET_SHARED_KEY_EXPIRE_MINUTES_COUNT"))
+
+	claims := jwt.MapClaims{}
+
+	claims["id"] = id
+	claims["expires"] = time.Now().Add(time.Minute * time.Duration(minutesCount)).Unix()
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte(secret))
+	if err != nil {
+		return "", err
+	}
 
 	return t, nil
 }

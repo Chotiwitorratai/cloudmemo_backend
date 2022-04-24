@@ -13,17 +13,17 @@ import (
 
 func main() {
     app := fiber.New()
-    database.ConnectDB()
-	router.SetupRoutes(app)
-
+    d := database.ConnectDB()
+    go database.AutoMigrate(d)
     app.Use(logger.New(logger.Config{
         Format:"[${ip}]:${port} ${status} - ${method} ${path}\n",
     }))
     app.Get("/", func(c *fiber.Ctx) error {
     // send text
-    return c.SendString("Hello, API")
+    return c.SendString("Online! Send your API")
     })    
 
-    log.Fatal(app.Listen(":3001"))
+	router.SetupRoutes(app)
+    log.Fatal(app.Listen(":3000"))
     // app.Listen(":3000")
 }

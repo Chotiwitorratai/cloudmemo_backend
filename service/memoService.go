@@ -15,27 +15,12 @@ func NewMemoDB(db *gorm.DB) *MemoDB {
 	}
 }
 
-func (mo *MemoDB) CreateMemoDB(a *model.Memo) error {
-	tx := mo.db.Begin()
-	if err := tx.Create(&a).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	if err := tx.Where(a.ID).Preload("Favorites").Preload("Author").First(&a).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-	return tx.Commit().Error
+func (mo *MemoDB) CreateMemo(m *model.Memo) (err error) {
+	return mo.db.Create(m).Error
 }
 
-
-func (us *UserDB) CreateMemo(u *model.Memo) (err error) {
-	return us.db.Create(u).Error
-}
-
-func (us *UserDB) UpdateMemo(u *model.Memo) error {
-	return us.db.Model(u).Updates(u).Error
+func (mo *MemoDB) UpdateMemo(m *model.Memo) error {
+	return mo.db.Model(m).Updates(m).Error
 }
 
 
