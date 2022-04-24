@@ -66,7 +66,6 @@ func UserSignIn(c *fiber.Ctx) error {
 	}
 	tokens, err := utils.GenerateNewTokens(user.ID)
 	if err != nil {
-		// Return status 500 and token generation error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status": "error",
 			"msg":   err.Error(),
