@@ -39,3 +39,7 @@ type UpdateMemo struct {
 type Renew struct {
 	RefreshToken string `json:"refresh_token"`
 }
+
+type PublishMemo struct {
+	ID uint `json:"id" validate:"required"`
+}

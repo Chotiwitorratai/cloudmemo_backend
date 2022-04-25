@@ -16,8 +16,12 @@ func SetupRoutes(app *fiber.App) {
 	user.Post("/sign/up",  controllers.UserSignUp)           
 	user.Post("/sign/in",  controllers.UserSignIn)
 	user.Get("/get/all",  controllers.GetAllUsers)
+	user.Get("/get/:user_id",  controllers.GetUser)
 	// route.Post("/token/renew", middleware.JWTProtected(), controllers.RenewTokens)   // renew Access & Refresh tokens
 	memo.Post("/create",middleware.JWTProtected(), controllers.CreateMemo)
+	memo.Put("/update",middleware.JWTProtected(), controllers.UpdateMemo)
+	memo.Put("/publish",middleware.JWTProtected(), controllers.PublishMemo)
+	memo.Delete("/delete/:memo_id",middleware.JWTProtected(), controllers.DeleteMemo)
 	memo.Get("/get/all/:user_id", controllers.GetAllMemo)
 	memo.Get("/get/:memo_id", controllers.GetMemo)
 	memo.Get("/get/shared/:memo_id",middleware.JWTProtected(), controllers.GetSharedToken)

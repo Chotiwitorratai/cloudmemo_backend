@@ -61,7 +61,7 @@ func UserSignIn(c *fiber.Ctx) error {
 		// Return, if password is not compare to stored in database.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status": "error",
-			"msg":   "wrong user email address or password",
+			"message":   "wrong user email address or password",
 		})
 	}
 	tokens, err := utils.GenerateNewTokens(user.ID)
@@ -69,13 +69,13 @@ func UserSignIn(c *fiber.Ctx) error {
 		// Return status 500 and token generation error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status": "error",
-			"msg":   err.Error(),
+			"message":   err.Error(),
 		})
 	}
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"status": "success",
-		"msg":   nil,
+		"message":   nil,
 		"tokens": fiber.Map{
 			"access":  tokens.Access,
 			"refresh": tokens.Refresh,
@@ -130,7 +130,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": true,
-				"msg":   err.Error(),
+				"message":   err.Error(),
 			})
 		}
 		return c.JSON(fiber.Map{
@@ -148,4 +148,25 @@ func RenewTokens(c *fiber.Ctx) error {
 			"message":   "unauthorized, your session was ended earlier",
 		})
 	}
+}
+
+func CheckToken(c *fiber.Ctx)error{
+	now := time.Now().Unix()
+	claims, err := utils.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status": "error",
+			"message":   err.Error(),
+		})
+	}
+
+	expires := claims.Expires
+
+	if now > expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status": "error",
+			"message":   "unauthorized, check expiration time of your token",
+		})
+	}
+	return nil
 }

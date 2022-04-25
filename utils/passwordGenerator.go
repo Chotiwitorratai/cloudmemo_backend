@@ -10,7 +10,6 @@ func NormalizePassword(p string) []byte {
 }
 
 func GeneratePassword(p string) string {
-	// Normalize password from string to []byte.
 	bytePwd := NormalizePassword(p)
 
 	hash, err := bcrypt.GenerateFromPassword(bytePwd, bcrypt.MinCost)

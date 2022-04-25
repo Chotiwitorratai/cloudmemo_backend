@@ -22,6 +22,7 @@ func SearchMusic(c *fiber.Ctx) error {
         Data  string `json:"data"`
 
     }{}
+	CheckToken(c)
 	c.BodyParser(&payload)
         flag.Parse()
 		query := flag.String("query", payload.Data, "Search term")
