@@ -1,9 +1,6 @@
 package utils
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -26,7 +23,7 @@ func GenerateNewTokens(id uint) (*Tokens, error) {
 	if err != nil {
 		return nil, err
 	}
-	refreshToken, err := generateNewRefreshToken()
+	refreshToken, err := generateNewRefreshToken(id)
 	if err != nil {
 		return nil, err
 	}
@@ -66,23 +63,24 @@ func generateNewAccessToken(id uint) (string, error) {
 	return t, nil
 }
 
-func generateNewRefreshToken() (string, error) {
-	hash := sha256.New()
+func generateNewRefreshToken(id uint) (string, error) {
+	secret := os.Getenv("JWT_REFRESH_KEY")
+	hoursCount, _ := strconv.Atoi(os.Getenv("JWT_REFRESH_KEY_EXPIRE_HOURS_COUNT"))
 
-	refresh := os.Getenv("JWT_REFRESH_KEY") + time.Now().String()
+	claims := jwt.MapClaims{}
 
-	_, err := hash.Write([]byte(refresh))
+	claims["id"] = id
+	claims["expires"] = time.Now().Add(time.Hour * time.Duration(hoursCount)).Unix()
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte(secret))
 	if err != nil {
 		return "", err
 	}
 
-	hoursCount, _ := strconv.Atoi(os.Getenv("JWT_REFRESH_KEY_EXPIRE_HOURS_COUNT"))
-	expireTime := fmt.Sprint(time.Now().Add(time.Hour * time.Duration(hoursCount)).Unix())
-
-	t := hex.EncodeToString(hash.Sum(nil)) + "." + expireTime
-
 	return t, nil
-}
+	}
 
 func generateNewSharedToken(id string) (string, error) {
 	secret := os.Getenv("JWT_SECRET_KEY")

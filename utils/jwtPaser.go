@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Chotiwitorratai/cloudmemo_backend/model"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -59,6 +60,29 @@ func ExtractToken(s string) (*TokenMetadata, error) {
 	return nil, err
 }
 
+func ExtractRefreshToken(s string) (*TokenMetadata, error) {
+	token, err := jwt.Parse(s, jwtKeyRefreshFunc)
+	if err != nil {
+		return nil, err
+	}
+
+	// Setting and checking token and credentials.
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		// User ID
+		userID := uint(claims["id"].(float64))
+		// Expires time.
+		expires := int64(claims["expires"].(float64))
+
+		return &TokenMetadata{
+			UserID:      userID,
+			Expires:     expires,
+		}, nil
+	}
+
+	return nil, err
+}
+
 func extractToken(c *fiber.Ctx) string {
 	bearToken := c.Get("Authorization")
 
@@ -82,6 +106,36 @@ func verifyToken(c *fiber.Ctx) (*jwt.Token, error) {
 	return token, nil
 }
 
+func verifyRefreshToken(c *fiber.Ctx) (*jwt.Token, error) {
+	tokenString := extractRefreshToken(c)
+
+	token, err := jwt.Parse(tokenString, jwtKeyFunc)
+	if err != nil {
+		return nil, err
+	}
+
+	return token, nil
+}
+
+func extractRefreshToken(c *fiber.Ctx) string {
+	renew := &model.Renew{}
+	if err := c.BodyParser(renew); err != nil {
+		return ""
+	}
+	return renew.RefreshToken
+	// // Normally Authorization HTTP header.
+	// onlyToken := strings.Split(bearToken, " ")
+	// if len(onlyToken) == 2 {
+	// 	return onlyToken[1]
+	// }
+
+	// return ""
+}
+
 func jwtKeyFunc(token *jwt.Token) (interface{}, error) {
 	return []byte(os.Getenv("JWT_SECRET_KEY")), nil
+}
+
+func jwtKeyRefreshFunc(token *jwt.Token) (interface{}, error) {
+	return []byte(os.Getenv("JWT_REFRESH_KEY")), nil
 }

@@ -59,7 +59,6 @@ func CreateMemo(c *fiber.Ctx) error {
     // memo.IsPublic = false
     memo.Author = *users
     err = db.Create(&memo).Error
-
     if err != nil {
         return c.Status(500).JSON(fiber.Map{
 			"status": "error",

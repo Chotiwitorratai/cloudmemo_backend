@@ -23,4 +23,3 @@ func (mo *MemoDB) UpdateMemo(m *model.Memo) error {
 	return mo.db.Model(m).Updates(m).Error
 }
 
-

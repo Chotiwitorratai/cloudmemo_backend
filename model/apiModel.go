@@ -36,3 +36,6 @@ type UpdateMemo struct {
 	Weather     string `json:"weather"`
 	MusicUrl    *string `json:"music_url"`
 }
+type Renew struct {
+	RefreshToken string `json:"refresh_token"`
+}
