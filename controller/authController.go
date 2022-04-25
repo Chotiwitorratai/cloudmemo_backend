@@ -20,9 +20,7 @@ func UserSignUp(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create database connection.
 	db := database.DB
-	// Create a new user struct.
 	user := &model.User{}
 
 	user.CreatedAt = time.Now()
@@ -36,7 +34,6 @@ func UserSignUp(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create user", "data": err})
 	}
 
-	// Return the created user
 	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Created User", "data": user})
 }
 
@@ -86,23 +83,6 @@ func UserSignIn(c *fiber.Ctx) error {
 
 func RenewTokens(c *fiber.Ctx) error {
 	now := time.Now().Unix()
-	// claims, err := utils.ExtractTokenMetadata(c)
-	// if err != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"status": "error",
-	// 		"message":   err.Error(),
-	// 	})
-	// }
-	// expiresAccessToken := claims.Expires
-
-	// if now > expiresAccessToken {
-	// 	// Return status 401 and unauthorized error message.
-	// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-	// 		"status": "error",
-	// 		"message":   "unauthorized, check expiration time of your token",
-	// 	})
-	// }
-
 	renew := &model.Renew{}
 	if err := c.BodyParser(renew); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
