@@ -10,10 +10,7 @@ import (
 func GetAllUsers(c *fiber.Ctx) error {
 	db := database.DB
     var users []model.User
-
     db.Find(&users)
-
-    // If no user is present return an error
     if len(users) == 0 {
         return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
     }
@@ -22,13 +19,16 @@ func GetAllUsers(c *fiber.Ctx) error {
 	
 }
 
-// func userIDFromToken(c *fiber.Ctx) uint {
-// 	var user *jwt.Token
-// 	l := c.Locals("user")
-// 	if l == nil {
-// 		return 0
-// 	}
-// 	user = l.(*jwt.Token)
-// 	id := uint(((user.Claims.(jwt.MapClaims)["id"]).(float64)))
-// 	return id
-// }
+func GetUser(c *fiber.Ctx) error {
+    CheckToken(c)
+	db := database.DB
+    id := c.Params("user_id")
+    user := model.User{}
+    db.First(&user,id)
+    if user.ID == 0 {
+        return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
+    }
+
+    return c.JSON(fiber.Map{"status": "success", "message": nil, "data": user})
+	
+}

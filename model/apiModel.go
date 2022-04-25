@@ -36,3 +36,10 @@ type UpdateMemo struct {
 	Weather     string `json:"weather"`
 	MusicUrl    *string `json:"music_url"`
 }
+type Renew struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+type PublishMemo struct {
+	ID uint `json:"id" validate:"required"`
+}

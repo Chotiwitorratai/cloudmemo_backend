@@ -1,13 +1,15 @@
 package utils
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
+
 
 func NormalizePassword(p string) []byte {
 	return []byte(p)
 }
 
 func GeneratePassword(p string) string {
-	// Normalize password from string to []byte.
 	bytePwd := NormalizePassword(p)
 
 	hash, err := bcrypt.GenerateFromPassword(bytePwd, bcrypt.MinCost)

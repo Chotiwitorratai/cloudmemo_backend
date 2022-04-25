@@ -33,6 +33,7 @@ type User struct {
 		Body        string
 		Weather     string
 		MusicUrl    *string
+		SharedToken string
 		IsPublic    bool `gorm:"default:false"`
 		Author      User
 		AuthorID    uint
