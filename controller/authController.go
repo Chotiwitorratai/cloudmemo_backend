@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+//
 
 func UserSignUp(c *fiber.Ctx) error {
 	signUp := &model.SignUp{}
