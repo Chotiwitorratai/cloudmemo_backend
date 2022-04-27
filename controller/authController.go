@@ -78,6 +78,7 @@ func UserSignIn(c *fiber.Ctx) error {
 			"access":  tokens.Access,
 			"refresh": tokens.Refresh,
 		},
+		"user":user,
 	})
 	
 }
