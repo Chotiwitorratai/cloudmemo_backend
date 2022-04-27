@@ -13,8 +13,14 @@ import (
 
 var (
         maxResults = flag.Int64("max-results", 25, "Max YouTube results")
+        query      = flag.String("query", "str", "Search term")
+        service    *youtube.Service
+        response   *youtube.SearchListResponse
 )
 
+type YoutubeSearchResult struct {
+    Title, YoutubeId string
+}
 const developerKey = "AIzaSyAZIfnXjE5-sxuImN31vJpwAe58nNeASfc"
 
 func SearchMusic(c *fiber.Ctx) error {
@@ -24,8 +30,26 @@ func SearchMusic(c *fiber.Ctx) error {
     }{}
 	CheckToken(c)
 	c.BodyParser(&payload)
+        // flag.Parse()
+
+//     client := &http.Client{
+//         Transport: &transport.APIKey{Key: developerKey},
+//     }
+
+//     service, err = youtube.New(client)
+//     if err != nil {
+//         return 
+//     }
+
+//     // Make the API call to YouTube.
+//     call := service.Search.List("id,snippet").
+//         Q(payload.Data).
+//         MaxResults(*maxResults)
+//     response, err = call.Do()
+//     if err != nil {
+//         return
+//     }
         flag.Parse()
-		query := flag.String("query", payload.Data, "Search term")
         client := &http.Client{
                 Transport: &transport.APIKey{Key: developerKey},
         }
@@ -37,28 +61,28 @@ func SearchMusic(c *fiber.Ctx) error {
 		var  list = []string{"id","snippet"}
         // Make the API call to YouTube.
         call := service.Search.List(list).
-                Q(*query).
+                Q(payload.Data).
                 MaxResults(*maxResults)
 
         response, err := call.Do()
         if err != nil {
 		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Could not create note", "data": err})
 		}
-
+        result := []YoutubeSearchResult{}
         // Group video, channel, and playlist results in separate lists.
-        videos := make(map[string]string)
-
+        // videos := make(map[string]string)
 
         // Iterate through each item and add it to the correct list.
         for _, item := range response.Items {
                 switch item.Id.Kind {
                 case "youtube#video":
-                        videos[item.Id.VideoId] = item.Snippet.Title
+                        result = append(result, YoutubeSearchResult{Title: item.Snippet.Title, YoutubeId: item.Id.VideoId})
        			}
 		}
-	printIDs("Videos", videos)
-	return c.Status(200).JSON(fiber.Map{"status": "success","message": nil,"data":videos})
-	}
+	// printIDs("Videos", result)
+	return c.Status(200).JSON(fiber.Map{"status": "success","message": nil,"data":result})
+}
+
 
 // Print the ID and title of each result in a list as well as a name that
 // identifies the list. For example, print the word section name "Videos"
