@@ -22,7 +22,7 @@ func SetupRoutes(app *fiber.App) {
 	memo.Put("/update",middleware.JWTProtected(), controllers.UpdateMemo)
 	memo.Put("/publish",middleware.JWTProtected(), controllers.PublishMemo)
 	memo.Delete("/delete/:memo_id",middleware.JWTProtected(), controllers.DeleteMemo)
-	memo.Get("/get/all/:user_id", controllers.GetAllMemo)
+	memo.Get("/get/all/:user_id",middleware.JWTProtected(), controllers.GetAllMemo)
 	memo.Get("/get/:memo_id", controllers.GetMemo)
 	memo.Get("/get/shared/:memo_id",middleware.JWTProtected(), controllers.GetSharedToken)
 
