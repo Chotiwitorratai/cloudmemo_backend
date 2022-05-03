@@ -64,6 +64,5 @@ require (
 	google.golang.org/api v0.75.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 	gorm.io/driver/postgres v1.3.3 // indirect
-	gorm.io/driver/sqlite v1.3.1 // indirect
 	gorm.io/gorm v1.23.4 // indirect
 )

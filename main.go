@@ -21,12 +21,9 @@ func main() {
     }))
     middleware.FiberMiddleware(app)
     app.Get("/", func(c *fiber.Ctx) error {
-    // send text
     return c.SendString("Online! Send your API")
     })    
 	router.SetupRoutes(app)
     router.NotFoundRoute(app)
-    // log.Fatal(app.Listen(":3000"))
     log.Fatal(app.Listen(":" + os.Getenv("PORT")))
-    // app.Listen(":3000")
 }

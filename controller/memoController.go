@@ -24,7 +24,7 @@ func CreateMemo(c *fiber.Ctx) error {
 	db := database.DB
 	db.Find(&users, "id = ?" ,claims.UserID )
 	 if users.ID == 0 {
-        return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
     }
     // var memo []model.Memo
 	memo := &model.Memo{}
@@ -39,14 +39,14 @@ func CreateMemo(c *fiber.Ctx) error {
     memo.Author = *users
     err = db.Create(&memo).Error
     if err != nil {
-        return c.Status(500).JSON(fiber.Map{
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status": "error",
 			"message": "Could not create note",
 			"data": err,	
 		})
     }
     // Return the created note
-    return c.JSON(fiber.Map{
+    return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"status": "success",
 		"message": "Created Memo",
 		"data": memo,
@@ -67,16 +67,14 @@ func UpdateMemo(c *fiber.Ctx) error {
 	db := database.DB
 	memo := &model.Memo{}
 	db.First(&memo, um.ID)	
-    // Add a uuid to the note
     memo.Title = um.Title
     memo.Description = um.Description
     memo.Body = um.Body
     memo.Weather = um.Weather
     memo.MusicUrl = um.MusicUrl
-    // memo.IsPublic = false
     err = db.Save(&memo).Error
     if err != nil {
-        return c.Status(500).JSON(fiber.Map{
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status": "error",
 			"message": "Could not create note",
 			"data": err,	
@@ -105,13 +103,13 @@ func PublishMemo(c *fiber.Ctx) error {
     memo.IsPublic = !memo.IsPublic
     err = db.Save(&memo).Error
     if err != nil {
-        return c.Status(500).JSON(fiber.Map{
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status": "error",
 			"message": "Could not create note",
 			"data": err,	
 		})
     }
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status": "success",
 		"message": "Updated Memo",
 		"data": memo,
@@ -127,13 +125,13 @@ func DeleteMemo(c *fiber.Ctx) error {
     
     err = db.Delete(&memo).Error
     if err != nil {
-        return c.Status(500).JSON(fiber.Map{
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status": "error",
 			"message": "Could not delete memo",
 			"data": err,	
 		})
     }
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status": "success",
 		"message": "Deleted memo",
 		"data": memo,
@@ -148,9 +146,9 @@ func GetAllMemo(c *fiber.Ctx) error {
 	id := c.Params("user_id")
     db.Find(&memos, "author_id = ?" ,id )
     if len(memos) == 0 {
-        return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
     }
-    return c.JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": memos})
+    return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": memos})
 	
 }
 
@@ -163,15 +161,15 @@ func GetMemo(c *fiber.Ctx) error {
     if len(memos) == 0 {
 		token,err := utils.ExtractToken(id)
 		if err != nil {
-			return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
 		}
 		db.Find(&memos, "id = ?" ,token.UserID )
 		if len(memos) == 0 {
-			return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
 		}
-		return c.JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": memos})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": memos})
     }
-    return c.JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": memos})
+    return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": memos})
 }
 
 func GetSharedToken(c *fiber.Ctx) error {
@@ -180,8 +178,8 @@ func GetSharedToken(c *fiber.Ctx) error {
 	id := c.Params("memo_id")
 	token, err := utils.GenerateNewSharedTokens(id)
 	if err != nil {
-		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
 	}
-    return c.JSON(fiber.Map{"status": "success", "message": "Found", "data": token})
+    return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Found", "data": token})
 
 }

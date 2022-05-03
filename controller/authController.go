@@ -9,7 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-//
 
 func UserSignUp(c *fiber.Ctx) error {
 	signUp := &model.SignUp{}
@@ -32,10 +31,10 @@ func UserSignUp(c *fiber.Ctx) error {
 
 	err = db.Create(user).Error
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create user", "data": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Could not create user", "data": err})
 	}
 
-	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Created User", "data": user})
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"status": "success", "message": "Created User", "data": user})
 }
 
 func UserSignIn(c *fiber.Ctx) error {
@@ -52,7 +51,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	db := database.DB
 	db.Find(&user,"email = ?",signIn.Email)
 	if user.ID == 0 {
-        return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No user present", "data": nil})
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "No user present", "data": nil})
     }
 	compareUserPassword := utils.ComparePasswords(user.Password, signIn.Password)
 	if !compareUserPassword {
@@ -71,7 +70,7 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 	// Return status 200 OK.
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status": "success",
 		"message":   nil,
 		"tokens": fiber.Map{
@@ -106,7 +105,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		users := &model.User{}
 		db.Find(&users, "id = ?" ,claims.UserID )
 		 if users.ID == 0 {
-        	return c.Status(404).JSON(fiber.Map{"status": "error", "message": "User with the given ID is not found", "data": nil})
+        	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "User with the given ID is not found", "data": nil})
    		 }
 		tokens, err := utils.GenerateNewTokens(userID)
 		if err != nil {
@@ -115,7 +114,7 @@ func RenewTokens(c *fiber.Ctx) error {
 				"message":   err.Error(),
 			})
 		}
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"status": "success", 
 			"message":   nil,
 			"tokens": fiber.Map{

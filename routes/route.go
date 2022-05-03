@@ -13,11 +13,15 @@ func SetupRoutes(app *fiber.App) {
 	token := app.Group("/token")
 	youtube := app.Group("/youtube")
 
+	//! user route
+
 	user.Post("/sign/up",  controllers.UserSignUp)           
 	user.Post("/sign/in",  controllers.UserSignIn)
 	user.Get("/get/all",  controllers.GetAllUsers)
 	user.Get("/get/:user_id",  controllers.GetUser)
-	// route.Post("/token/renew", middleware.JWTProtected(), controllers.RenewTokens)   // renew Access & Refresh tokens
+	
+	//! memo route
+
 	memo.Post("/create",middleware.JWTProtected(), controllers.CreateMemo)
 	memo.Put("/update",middleware.JWTProtected(), controllers.UpdateMemo)
 	memo.Put("/publish",middleware.JWTProtected(), controllers.PublishMemo)
@@ -26,6 +30,9 @@ func SetupRoutes(app *fiber.App) {
 	memo.Get("/get/:memo_id", controllers.GetMemo)
 	memo.Get("/get/shared/:memo_id",middleware.JWTProtected(), controllers.GetSharedToken)
 
+	//! token route
+
 	token.Post("/renew", middleware.JWTProtected(), controllers.RenewTokens)
+
 	youtube.Post("/Search", middleware.JWTProtected(), controllers.SearchMusic)
 }

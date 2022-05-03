@@ -11,11 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 var DB *gorm.DB
+
 // ConnectDB connect to db
 func ConnectDB() *gorm.DB{
-    // var err error
-    // p := config.Config("DB_PORT")
-    // port, err := strconv.ParseUint(p, 10, 32)
+   
  	err := godotenv.Load()
   	if err != nil {
     log.Fatalf("Error while reading config file %s", err)
@@ -31,9 +30,7 @@ func ConnectDB() *gorm.DB{
  	dsn := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s", DB_HOST, DB_USER, DB_NAME, DB_PORT, DB_PASSWORD)
 
     // Connection URL to connect to Postgres Database
-    // dsn := fmt.Sprintf("host=%s user=%d dbname=%s port=%s dbnamepassword=%s", config.Config("DB_HOST"), config.Config("DB_USER"),config.Config("DB_PORT") , config.Config("DB_PASSWORD"), config.Config("DB_NAME"))
 	DB, err = gorm.Open(postgres.Open(dsn))
-// DB, err = gorm.Open("sqlite3", "/tmp/gorm.db")
     if err != nil {
         panic(err)
     }
@@ -46,14 +43,5 @@ func ConnectDB() *gorm.DB{
     fmt.Println("Connection Opened to Database")
 
 	return DB
-}
-
-func AutoMigrate(db *gorm.DB) {
-	db.AutoMigrate(
-		&model.User{},
-		&model.Memo{},
-		&model.Comment{},
-	)
-	fmt.Println("Database Migrated")
 }
 
